@@ -1,3 +1,5 @@
+we are forking off after no response to offering `help <https://github.com/lingthio/Flask-User/issues/223>`_ to maintain and being blocked by a simple `issue <https://github.com/lingthio/Flask-User/issues/223>`_.
+
 Flask-User v1.0
 ===============
 
