@@ -6,6 +6,7 @@
 
 import os
 import uuid
+import datetime
 
 from flask import Flask, render_template_string
 from flask_mail import Mail
@@ -30,9 +31,12 @@ class ConfigClass(object):
     MAIL_PORT = int(os.getenv('MAIL_PORT', '465'))
     MAIL_USE_SSL = int(os.getenv('MAIL_USE_SSL', True))
 
+
     # Flask-User settings
     USER_APP_NAME = "AppName"  # Used by email templates
-
+    USER_ENABLE_USERNAME = False
+    USER_REQUIRE_INVITATION = True
+    USER_ENABLE_INVITE_USER = True
 
 def create_app():
     """ Flask application factory """
@@ -41,9 +45,29 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(__name__ + '.ConfigClass')
 
+    dburl = None
+    if os.environ.get('DYNAMODB_LOCAL', False):
+        dburl = 'http://localhost:8000'
+
     # Initialize Flask extensions
     db = None
     mail = Mail(app)  # Initialize Flask-Mail
+
+
+
+    class UserInvite(Model):
+
+        class Meta:
+            read_capacity_units = 1
+            write_capacity_units = 1
+            table_name = 'user_invites'
+            host = dburl
+              
+        id = UnicodeAttribute(hash_key=True, default=lambda: str(uuid.uuid4()))
+        
+        invited_by_user_id = UnicodeAttribute(null=True)
+        email = UnicodeAttribute(null=True)
+
 
     # Define the User data model. Make sure to add flask_user UserMixin !!!
     class UsernameIndex(GlobalSecondaryIndex):
@@ -51,6 +75,7 @@ def create_app():
             read_capacity_units = 1
             write_capacity_units = 1
             projection = AllProjection()
+            host = dburl
 
         username = UnicodeAttribute(hash_key=True)
 
@@ -59,12 +84,14 @@ def create_app():
             read_capacity_units = 1
             write_capacity_units = 1
             projection = AllProjection()
+            host = dburl
 
         email = UnicodeAttribute(hash_key=True)
 
     class User(Model, UserMixin):
         class Meta:
-            table_name = 'users'
+            table_name = 'test_users'
+            host = dburl
 
         id = UnicodeAttribute(hash_key=True, default=lambda: str(uuid.uuid1()))
         active = BooleanAttribute()
@@ -87,12 +114,15 @@ def create_app():
 
 
     # Setup Flask-User
-    user_manager = UserManager(app, db, User)
+    user_manager = UserManager(app, db, User, UserInvitationClass=UserInvite)
 
     # Create all database tables
-    print('create_schema()')
     user_manager.db_manager.create_all_tables()
-    print('created_schema()')
+
+    # add admin user
+    admin = User(active=True, password=app.user_manager.hash_password('Password1'), 
+                 email='admin@test.com', email_confirmed_at=datetime.datetime.utcnow())
+    admin.save()
 
     # The Home page is accessible to anyone
     @app.route('/')

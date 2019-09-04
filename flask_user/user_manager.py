@@ -77,7 +77,7 @@ class UserManager(UserManager__Settings, UserManager__Utils, UserManager__Views)
         self.db = db
         # self.db_manager.UserClass = UserClass
         # self.db_manager.UserEmailClass = UserEmailClass
-        # self.UserInvitationClass = UserInvitationClass
+        self.UserInvitationClass = UserInvitationClass
         # self.RoleClass=RoleClass
 
         # Load app config settings
