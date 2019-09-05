@@ -12,9 +12,9 @@ venv:
 
 dependencies: venv
 	source $(ROOT_DIR)/env/bin/activate && \
-	python -m pip install -r $(ROOT_DIR)/requirements.txt && \
+	python -m pip install -r $(ROOT_DIR)/../../requirements.txt && \
 	python -m pip install -r $(ROOT_DIR)/requirements_pynamodb.txt && \
-	python -m pip install -e .
+	python -m pip install -e ../..
 
 clean_testenv:
 	rm -rf $(ROOT_DIR)/env;
