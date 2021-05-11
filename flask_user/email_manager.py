@@ -41,20 +41,14 @@ class EmailManager(object):
         if not self.user_manager.USER_ENABLE_EMAIL: return
         if not self.user_manager.USER_ENABLE_CONFIRM_EMAIL: return
 
-        try:
-            print('user attr %s' % user._attributes)
-            print('user attr %s' % user_email._attributes)
-        except:
-            pass
+        print('user attr %s' % user._attributes)
+        print('user attr %s' % user_email._attributes)
         # The confirm_email email is sent to a specific user_email.email or user.email
         email = user_email.email if user_email else user.email
 
-        try:
-            print('email %s' % email)
-            print('user_email.email %s' % user_email.email)
-            print('user.email %s' % user.email)
-        except:
-            pass
+        print('email %s' % email)
+        print('user_email.email %s' % user_email.email)
+        print('user.email %s' % user.email)
 
         # Generate a confirm_email_link
         object_id = user_email.id if user_email else user.id
