@@ -82,8 +82,8 @@ class EmailManager(object):
         if not self.user_manager.USER_ENABLE_EMAIL: return
         assert self.user_manager.USER_ENABLE_FORGOT_PASSWORD
 
-        print('user attr %s' % user._attributes)
-        print('user email attr %s' % user_email._attributes)
+        print('user attr %s' % user.attribute_values)
+        print('user email attr %s' % user_email.attribute_values)
 
         # The reset_password email is sent to a specific user_email.email or user.email
         email = user_email.email if user_email else user.email
