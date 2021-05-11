@@ -93,7 +93,9 @@ class PynamoDbAdapter(DbAdapterInterface):
         for o in ObjectClass.scan(ntfilter):
             for k in tfilters:
                 attr = getattr(o, k, None)
-                if attr and attr.lower() != kwargs[k]:
+                if not attr:
+                    break
+                if attr.lower() != kwargs[k]:
                     break
             else:
                 # all match
