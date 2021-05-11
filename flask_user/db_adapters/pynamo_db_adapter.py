@@ -96,7 +96,9 @@ class PynamoDbAdapter(DbAdapterInterface):
                 print('searching for: %s' % k)
                 attr = getattr(o, k, None)
                 print('attr val: %s' % attr)
-                if attr and attr.lower() != kwargs[k]:
+                if not attr:
+                    break
+                if attr.lower() != kwargs[k]:
                     break
             else:
                 # all match
