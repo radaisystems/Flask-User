@@ -91,18 +91,14 @@ class PynamoDbAdapter(DbAdapterInterface):
             ntfilter = cond if ntfilter is None else ntfilter & cond
 
         for o in ObjectClass.scan(ntfilter):
-            print('obj under consideration: %s' % o.attribute_values)
             for k in tfilters:
-                print('searching for: %s' % k)
                 attr = getattr(o, k, None)
-                print('attr val: %s' % attr)
                 if not attr:
                     break
                 if attr.lower() != kwargs[k]:
                     break
             else:
                 # all match
-                print('returning: %s' % o.attribute_values)
                 return o
 
         return None
